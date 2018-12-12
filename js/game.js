@@ -57,8 +57,11 @@ initialize:
         this.setPosition(shooter.x-20, shooter.y)
     },
     
-    update: function(time,delta){
+    update: function(){
+        this.nextFire +=.5
+        if(this.nextFire >=70)
         this.x -= this.speed;
+        
         
         if(this.x < -5){
         this.setActive(false);
@@ -497,7 +500,8 @@ let config = {
             debug: false
         }
     },
-  scene: [menu,gameScene]
+  scene: [menu,gameScene],
+    pixelArt:true
     
 };
 

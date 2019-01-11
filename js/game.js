@@ -1,22 +1,21 @@
-var bg;
+var bg; /*global variable for background*/
 var score =0;
 var scoreText;
-var upgrade = false;
-var sound = false;
+var upgrade = false;    /*variable that controls if player has the upgraded weapon*/
+var sound = false;  /*variable that controls if sound effects can be played*/
 var counter1=0;
 var counter2=0;
 var counter3=0;
-var counter4=0;
+var counter4=0; /*counters for all of the count active functions in the update loop*/
 var counter5=0;
 var counter6=0;
 var counter7=0;
 var counter8=0;
+var counter9 = 0;
 // create a new scene
 let gameScene = new Phaser.Scene('Game');
 
-
-
-
+/*class for player bullets*/
 var Bullet = new Phaser.Class({
 
 Extends: Phaser.GameObjects.Image,
@@ -25,22 +24,21 @@ initialize:
 
  function Bullet(scene)  {
         Phaser.GameObjects.Image.call(this,scene, 0 , 0, 'bullet');
-        this.speed = 400;
+        this.speed = 500;       /*defines the speed of the bullet*/
         this.setSize(1,1,true);
-        this.nextFire = 0;
     
     },
     
-    fire: function (x,y){
+    fire: function (x,y){   /*function that set the bullets position when fired*/
     
         this.setPosition(x+20,y)
     },
     
     update: function(){
         
-        this.body.setVelocity(this.speed,0);
+        this.body.setVelocity(this.speed,0);    
        
-        if(this.x > gameScene.sys.game.config.width){
+        if(this.x > gameScene.sys.game.config.width){   /*if the bullet passes the boundry of the screen, it is set to deactive and stops moving*/
         
         this.setActive(false).setVisible(false);
         this.body.setVelocity(0,0);
@@ -48,9 +46,10 @@ initialize:
     }
 
 
-})
+})  
 
-var EnemyBulletTrack = new Phaser.Class({
+/*class for enemy bullets that track the players y position and change direction*/
+var EnemyBulletTrack = new Phaser.Class({   
 
 Extends: Phaser.GameObjects.Image,
 
@@ -98,8 +97,9 @@ initialize:
     }
 
 
-})
+})  
 
+/*class for enemy bullets that shoot straight */
 var EnemyBulletStraight = new Phaser.Class({
 
 Extends: Phaser.GameObjects.Image,
@@ -132,6 +132,7 @@ initialize:
 
 })
 
+/*class for enemy bullets that expand when fired*/
 var EnemyBulletExpand = new Phaser.Class({
 
 Extends: Phaser.GameObjects.Image,
@@ -149,7 +150,7 @@ initialize:
     },
     
     grow:function(){
-        if(this.scaleX < 1.8) {
+        if(this.scaleX < 1.5) {
     // make the player grow
             this.scaleX += (0.01 / this.scaleX);
             this.scaleY += (0.01 / this.scaleY);
@@ -172,6 +173,7 @@ initialize:
 
 })
 
+/*class for enemies that bounce of the edge of the screen and use tracking bullets*/
 var Enemy = new Phaser.Class({
     
     Extends: Phaser.GameObjects.Sprite,
@@ -182,7 +184,7 @@ var Enemy = new Phaser.Class({
         Phaser.GameObjects.Sprite.call(this,scene, 0 , 0, 'enemy');
         this.texture = 'enemy1';
         this.speed = 20;
-        this.xSpeed = -10;
+        this.xSpeed = -30;
         this.ySpeed = 5;
         this.setAngle(90);
         gameScene.physics.world.enable(Enemy);
@@ -232,6 +234,7 @@ var Enemy = new Phaser.Class({
     
 });
 
+/*class for enemies that fly straight and use straight bullets*/
 var Enemy1 = new Phaser.Class({
     
     Extends: Phaser.GameObjects.Sprite,
@@ -241,7 +244,7 @@ var Enemy1 = new Phaser.Class({
     function Enemy1(scene){
         Phaser.GameObjects.Sprite.call(this,scene, 0 , 0, 'enemy');
         this.texture = 'enemy1';
-        this.speed = -20;
+        this.speed = -30;
         gameScene.physics.world.enable(Enemy1);
         this.setScale(.2,.2);
         
@@ -271,6 +274,7 @@ var Enemy1 = new Phaser.Class({
     
 });
 
+/*class for enemies that fly straight and use expanding bullets*/
 var Enemy2 = new Phaser.Class({
     
     Extends: Phaser.GameObjects.Sprite,
@@ -280,7 +284,7 @@ var Enemy2 = new Phaser.Class({
     function Enemy2(scene){
         Phaser.GameObjects.Sprite.call(this,scene, 0 , 0, 'enemy');
         this.texture = 'enemy1';
-        this.speed = -20;
+        this.speed = -30;
         this.setRotation(90);
         gameScene.physics.world.enable(Enemy2);
         
@@ -316,7 +320,7 @@ var Enemy2 = new Phaser.Class({
 });
 
 
-var onHit = function(enemyHit, bulletHit)
+var onHit = function(enemyHit, bulletHit)   /*function that defines what happens when an enemy is hit by the players bullets*/
 {
     if (bulletHit.active === true && enemyHit.active === true)
     {
@@ -333,13 +337,10 @@ var onHit = function(enemyHit, bulletHit)
     }
 };
 
-var onPlayerHit = function(playerHit, bulletHit)
+var onPlayerHit = function(playerHit, bulletHit) /*function that defines what happens when the player is hit by the enemis bullets*/
 {
-    // Reduce health of enemy
     if (bulletHit.active === true && playerHit.active === true)
     {
-        
-
         // Destroy bullet
         bulletHit.body.setVelocity(0,0)
         bulletHit.setActive(false).setVisible(false);
@@ -355,14 +356,10 @@ var onPlayerHit = function(playerHit, bulletHit)
             gameScene.lives.remove(gameScene.lives.getChildren()[0],true);
             gameScene.gameOver();
             }
-        
-        
-        
-    
     }
 };
 
-var onSpecHit = function(enemyHit, bulletHit)
+var onSpecHit = function(enemyHit, bulletHit)   /*function that defines what happens when the player hits the special enemy*/
 {
     if (bulletHit.active === true && enemyHit.active === true)
     {
@@ -379,7 +376,7 @@ var onSpecHit = function(enemyHit, bulletHit)
     }
 };
 
-var onPowerUpHit = function(playerHit, powerHit)
+var onPowerUpHit = function(playerHit, powerHit)    /*function that defines what happens when the player hits the power up*/
 {
     if (playerHit.active === true && powerHit.active === true)
     {
@@ -395,6 +392,7 @@ var onPowerUpHit = function(playerHit, powerHit)
 gameScene.init = function() {
   this.playerSpeed = 1.5;
   sound = click;
+    score= 0;
 }
 
 // load assets
@@ -402,7 +400,7 @@ gameScene.preload = function(){
   // load images
     var loading = this.add.graphics();
 
-    this.load.on('loading', function (value) {
+    this.load.on('loading', function (value) {  /*displays a loading bar when the scene first starts*/
 
         loading.clear();
         loading.fillStyle(0x2067d8, 1);
@@ -454,11 +452,11 @@ gameScene.preload = function(){
 
 gameScene.create = function() {
 
-    this.explosion = this.sound.add('explosion');
+    this.explosion = this.sound.add('explosion');   /*adds sound effects to scene*/
     this.laser = this.sound.add('laser');
 
   // create bg sprite
-  bg = this.add.tileSprite(0, 0,640,360, 'background');
+  bg = this.add.tileSprite(0, 0,640,360, 'background'); /*adds background to scene and makes it repeat when the x ot y position is moved*/
 
   // change the origin to the top-left corner
   bg.setOrigin(0,0);
@@ -468,22 +466,22 @@ gameScene.create = function() {
   // create the player
   this.player = this.physics.add.sprite(140,  this.sys.game.config.height / 2, 'player');
 
-  // we are reducing the width and height by 50%
+  // we are reducing the width and height of the player by 50%
   this.player.setScale(0.5);
 
-    scoreText = this.add.text(300, 16, 'score: '+score, { fontSize: '12px', fill: '#fff' });
+    scoreText = this.add.text(300, 16, 'score: '+score, { fontSize: '12px', fill: '#fff' });    /*creates score text*/
 
     
-  this.leftbutton = this.physics.add.sprite(30,90,'dir_button');
+  this.leftbutton = this.physics.add.sprite(30,90,'dir_button').setDepth(50);
     this.leftbutton.setScale(1,1.50);
     this.leftbutton.setInteractive();
     
-    this.rightbutton = this.physics.add.sprite(30,230,'dir_button');
+    this.rightbutton = this.physics.add.sprite(30,230,'dir_button').setDepth(50);       /*Defines the players controls on screen and makes them interactive*/
     this.rightbutton.setInteractive();
     this.rightbutton.setScale(1,1.50);
     this.rightbutton.setAngle(180);
     
-    this.firebutton = this.physics.add.sprite(90,155,'fire_button');
+    this.firebutton = this.physics.add.sprite(90,155,'fire_button').setDepth(50);
     this.firebutton.setInteractive();
     this.firebutton.setScale(1,1.33);
     
@@ -491,10 +489,9 @@ gameScene.create = function() {
         fontSize: '12px',
         fill:'#fff'
     });
-    this.pause.setInteractive();
+    this.pause.setInteractive();    /*creates a pause button and makes it interactive*/
     
-  // goal
-
+    /*group of  player bullets */
     this.playerBullets = this.physics.add.group({ 
         key: 'bullet',
         classType: Bullet, 
@@ -508,6 +505,7 @@ gameScene.create = function() {
             
     });
    
+    /*group of straight enemy bullets */
     this.enemy1Bullets = this.physics.add.group({ 
         key: 'enem_bullet2',
         classType: EnemyBulletStraight, 
@@ -516,8 +514,8 @@ gameScene.create = function() {
         
             
     });
-    Phaser.Actions.ScaleXY(gameScene.enemy1Bullets.getChildren(),-.4,-.4);
-    
+    Phaser.Actions.ScaleXY(gameScene.enemy1Bullets.getChildren(),-.4,-.4);  /*reduces size of bullets*/
+    /*group of enemy tracking bullets */
     this.enemy2Bullets = this.physics.add.group({ 
         key: 'enem_bullet1',
         classType: EnemyBulletTrack, 
@@ -526,8 +524,9 @@ gameScene.create = function() {
         
             
     });
-    Phaser.Actions.ScaleXY(gameScene.enemy2Bullets.getChildren(),-.4,-.4);
+    Phaser.Actions.ScaleXY(gameScene.enemy2Bullets.getChildren(),-.6,-.6);
     
+    /*group of enemy expanding bullets */
     this.enemy3Bullets = this.physics.add.group({ 
         key: 'enem_bullet3',
         classType: EnemyBulletExpand, 
@@ -538,7 +537,7 @@ gameScene.create = function() {
     });
     Phaser.Actions.ScaleXY(gameScene.enemy3Bullets.getChildren(),-.4,-.4);
     
-  
+  /*group of player lives*/
   this.lives = this.physics.add.group({
       key: 'player',
       repeat:2,
@@ -557,6 +556,7 @@ gameScene.create = function() {
   });
   Phaser.Actions.Rotate(gameScene.lives.getChildren(),4.70);
     
+    /*container group that stores all enemies created */
   this.totalEnemies = this.physics.add.group({
       runChildUpdate:true,
     });
@@ -619,7 +619,7 @@ gameScene.create = function() {
       runChildUpdate:true,
       repeat:5,
       setXY:{
-      x: this.sys.game.config.width+500,
+      x: this.sys.game.config.width+1200,
       y:20,
       stepX:30,
       stepY:15
@@ -635,7 +635,7 @@ gameScene.create = function() {
       runChildUpdate:true,
       repeat:5,
       setXY:{
-      x: this.sys.game.config.width+700,
+      x: this.sys.game.config.width+1400,
       y:20,
       stepX:30,
       stepY:15
@@ -651,7 +651,7 @@ gameScene.create = function() {
       runChildUpdate:true,
       repeat:5,
       setXY:{
-      x: this.sys.game.config.width+900,
+      x: this.sys.game.config.width+1600,
       y:20,
       stepX:30,
       stepY:15
@@ -665,9 +665,9 @@ gameScene.create = function() {
       key:'enemy',
       classType:Enemy2,
       runChildUpdate:true,
-      repeat:2,
+      repeat:5,
       setXY:{
-      x: this.sys.game.config.width+500,
+      x: this.sys.game.config.width+1800,
       y:900,
       stepX:30,
       stepY:15
@@ -681,9 +681,9 @@ gameScene.create = function() {
       key:'enemy',
       classType:Enemy2,
       runChildUpdate:true,
-      repeat:2,
+      repeat:5,
       setXY:{
-      x: this.sys.game.config.width+700,
+      x: this.sys.game.config.width+2000,
       y:900,
       stepX:30,
       stepY:15
@@ -697,16 +697,16 @@ gameScene.create = function() {
       key:'enemy',
       classType:Enemy2,
       runChildUpdate:true,
-      repeat:2,
+      repeat:5,
       setXY:{
-      x: this.sys.game.config.width+900,
+      x: this.sys.game.config.width+2200,
       y:900,
       stepX:900,
       stepY:15
       
     }
       
-  });
+    });
     Phaser.Actions.ScaleXY(gameScene.enemy3_Group3.getChildren(),-.4,-.4);
    
     Phaser.Actions.Rotate(gameScene.enemy1_Group1.getChildren(),4.70);
@@ -714,7 +714,7 @@ gameScene.create = function() {
     this.totalEnemies.addMultiple(gameScene.enemy1_Group1.getChildren());
     this.totalEnemies.addMultiple(gameScene.enemy1_Group2.getChildren());
     this.totalEnemies.addMultiple(gameScene.enemy1_Group3.getChildren());
-    this.totalEnemies.addMultiple(gameScene.enemy2_Group1.getChildren());
+    this.totalEnemies.addMultiple(gameScene.enemy2_Group1.getChildren());   /*adds all enemies to global container*/
     this.totalEnemies.addMultiple(gameScene.enemy2_Group2.getChildren());
     this.totalEnemies.addMultiple(gameScene.enemy2_Group3.getChildren());
     this.totalEnemies.addMultiple(gameScene.enemy3_Group1.getChildren());
@@ -722,9 +722,17 @@ gameScene.create = function() {
     this.totalEnemies.addMultiple(gameScene.enemy3_Group3.getChildren());
     /*this.totalEnemies.addMultiple(gameScene.enemy2_Group2.getChildren());
     this.totalEnemies.addMultiple(gameScene.enemy2_Group3.getChildren());*/
-/*  this.specEnemy = this.physics.add.sprite(300,50,'spec_enemy');
-  this.powerUp = this.physics.add.sprite(0,550,'power');*/
+ 
+    this.specEnemy = this.physics.add.group({
+      key:'spec_enemy',
+      repeat:0,
+      setXY: {
+          x: this.sys.game.config.width+2200
+      }
+  });
+  this.powerUp = this.physics.add.sprite(0,550,'power');
     
+    /*variable that stores the frames that make the power up flash*/
     let anim_frames = this.anims.generateFrameNames('power_up_anim',{
         start:0,
         end:2,
@@ -739,7 +747,7 @@ gameScene.create = function() {
         repeat:-1
     });
     
-   // this.powerUp.anims.play('flashing');
+    this.powerUp.anims.play('flashing');
     
    /* let deathFrames = this.anims.generateFrameNames('death_anim',{
         start:0,
@@ -760,7 +768,7 @@ gameScene.create = function() {
 
     
     
-        /*pathing for enemy type two*/
+        /*defunct pathing for enemy type two*/
    /* var graphics = this.add.graphics();
 
     var path = new Phaser.Curves.Path(700 ,155 );
@@ -814,13 +822,13 @@ gameScene.create = function() {
     console.log(gameScene.followers.getLength());*/
 
 
-     
+     /*function that handels the up button*/
     this.leftbutton.on('pointerdown',function(event){
         if(gameScene.player.y<=20 ){
             gameScene.player.setVelocity(0,0); 
         }
         else{
-            gameScene.player.setVelocity(0,-100);
+            gameScene.player.setVelocity(0,-150);
         }
         
     },this);
@@ -830,12 +838,14 @@ gameScene.create = function() {
         gameScene.player.setVelocity(0);
     },this);
     
+    
+    /*function that handels the down button*/
     this.rightbutton.on('pointerdown',function(event){
         if(gameScene.player.y>= this.sys.game.config.height-20){
             gameScene.player.setVelocity(0,0); 
         }
         else{
-            gameScene.player.setVelocity(0,100);
+            gameScene.player.setVelocity(0,150);
         }
     },this);
     
@@ -844,6 +854,7 @@ gameScene.create = function() {
                                                     
     },this);
     
+    /*function that handels the fire button*/
     this.firebutton.on('pointerdown',function(event){
      if(upgrade === true){   
       var bullet1 = this.playerBullets.get().setActive(true).setVisible(true);
@@ -863,6 +874,8 @@ gameScene.create = function() {
         
         
     }
+        
+        /*a sound effect plays when player fires at player*/
      if(sound){
             gameScene.laser.play();
         }    
@@ -906,20 +919,21 @@ gameScene.create = function() {
     var collider1 = gameScene.physics.add.collider(gameScene.playerBullets, gameScene.totalEnemies,onHit);
     
     var collider3 = gameScene.physics.add.collider(gameScene.player, gameScene.enemy1Bullets,onPlayerHit);
-    var collider3 = gameScene.physics.add.collider(gameScene.player, gameScene.enemy2Bullets,onPlayerHit);
+    var collider3 = gameScene.physics.add.collider(gameScene.player, gameScene.enemy2Bullets,onPlayerHit);  /*various colliders that handle overlap between different sprites*/
     var collider3 = gameScene.physics.add.collider(gameScene.player, gameScene.enemy3Bullets,onPlayerHit);
-   /* var collider4 = gameScene.physics.add.collider(gameScene.player, gameScene.testBullets,onPlayerHit);
+   /* var collider4 = gameScene.physics.add.collider(gameScene.player, gameScene.testBullets,onPlayerHit);*/
     var collider5 = gameScene.physics.add.collider(gameScene.playerBullets, gameScene.specEnemy,onSpecHit);
-    var collider6 = gameScene.physics.add.collider(gameScene.player, gameScene.powerUp,onPowerUpHit);*/
+    var collider6 = gameScene.physics.add.collider(gameScene.player, gameScene.powerUp,onPowerUpHit);
     
     
 };
 
-
+    
 
 
 // this is called up to 60 times per second
 gameScene.update = function(){
+    /*if the enemy group is empty, summon the next group and position them on the screen*/
     if(gameScene.enemy1_Group1.countActive() == 0){
         while(counter1<=gameScene.enemy1_Group2.getLength()){
             var i = 1;
@@ -989,12 +1003,12 @@ gameScene.update = function(){
             }    
     
     if(gameScene.enemy2_Group3.countActive() == 0){
-        while(counter6<=gameScene.enemy3_Group1.getLength()){
+        while(counter6<=gameScene.specEnemy.getLength()){
             var i = 1;
-        Phaser.Actions.Call(gameScene.enemy3_Group1.getChildren(), function(enemy) {
+        Phaser.Actions.Call(gameScene.specEnemy.getChildren(), function(enemy) {
             
-            enemy.setPosition((this.sys.game.config.width)+(30*i),0+(40*i));
-            
+            enemy.setPosition((this.sys.game.config.width)+10,(this.sys.game.config.height/2));
+            enemy.setVelocity(40,0);
             
             i++;
            counter6++;
@@ -1003,8 +1017,23 @@ gameScene.update = function(){
        
             }
     
+    if(gameScene.specEnemy.countActive() == 0){
+        while(counter7<=gameScene.enemy3_Group1.getLength()){
+            var i = 1;
+        Phaser.Actions.Call(gameScene.enemy3_Group1.getChildren(), function(enemy) {
+            
+            enemy.setPosition((this.sys.game.config.width)-(15*i),0+(50*i));
+         
+            
+            i++;
+           counter7++;
+            }, this);
+        }
+       
+            }
+    
     if(gameScene.enemy3_Group1.countActive() == 0){
-        while(counter7<=gameScene.enemy3_Group2.getLength()){
+        while(counter8<=gameScene.enemy3_Group2.getLength()){
             var i = 1;
         Phaser.Actions.Call(gameScene.enemy3_Group2.getChildren(), function(enemy) {
             
@@ -1012,7 +1041,22 @@ gameScene.update = function(){
          
             
             i++;
-           counter7++;
+           counter8++;
+            }, this);
+        }
+       
+            }
+    
+    if(gameScene.enemy3_Group2.countActive() == 0){
+        while(counter9<=gameScene.enemy3_Group3.getLength()){
+            var i = 1;
+        Phaser.Actions.Call(gameScene.enemy3_Group3.getChildren(), function(enemy) {
+            
+            enemy.setPosition((this.sys.game.config.width)-(15*i),0+(50*i));
+         
+            
+            i++;
+           counter9++;
             }, this);
         }
        
@@ -1030,8 +1074,10 @@ gameScene.update = function(){
         gameScene.pause.setText('Unmute');
     }
     scoreText.setText('Score: '+score);
-    
-    bg.tilePositionX+= .15;
+    if(specEnemy.x<30){
+        specEnemy.destroy();
+    }
+    bg.tilePositionX+= .15;     /*increment background x position*/
     gameScene.planet.x-= .05;
     if(gameScene.player.y<=0){
         gameScene.player.y=20;
@@ -1045,13 +1091,8 @@ gameScene.update = function(){
 
 gameScene.gameOver = function() {
    
-    this.gameoverText = this.add.text((this.sys.game.config.width /2)-24, (this.sys.game.config.height /2)-12, 'Final Score: '+score, { fontSize: '24px', fill: '#fff' });
-    this.retryText = this.add.text((this.sys.game.config.width /2)-12, (this.sys.game.config.height /2)+12, 'Retry?', { fontSize: '24px', fill: '#fff' });
-    this.retryText.setInteractive();
-    this.retryText.on('pointerdown', function () {
-        },this);
-  
-  
+    gameScene.scene.pause();
+    gameScene.scene.start('GameOver',{score:score});
 }
 
 
@@ -1072,7 +1113,7 @@ let config = {
             debug: false
         }
     },
-  scene: [menu,gameScene],
+  scene: [menu,help,gameScene,gameOver],
     pixelArt:true
     
 };

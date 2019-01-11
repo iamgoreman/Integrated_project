@@ -16,8 +16,9 @@ gameOver.preload = function(){
 
 // called once after the preload ends
 gameOver.create = function() {
-    this.gameoverText = this.add.text((this.sys.game.config.width /2)-24, (this.sys.game.config.height /2)-12, 'Final Score: '+gameOver.score, { fontSize: '24px', fill: '#fff' });
-    this.retryText = this.add.text((this.sys.game.config.width /2)-12, (this.sys.game.config.height /2)+12, 'Retry?', { fontSize: '24px', fill: '#fff' });
+    this.gameoverText = this.add.text((this.sys.game.config.width /2)-48, (this.sys.game.config.height /2)-12, 'Final Score: '+gameOver.score, 
+                                      { fontSize: '24px', fill: '#fff' });
+    this.retryText = this.add.text(gameOver.gameoverText.x, (gameOver.gameoverText.y)+36, 'Retry?', { fontSize: '24px', fill: '#fff' });
     this.retryText.setInteractive();
     this.retryText.on('pointerdown', function () {
         this.scene.start('Game');

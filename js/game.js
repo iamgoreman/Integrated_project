@@ -1008,7 +1008,7 @@ gameScene.update = function(){
         Phaser.Actions.Call(gameScene.specEnemy.getChildren(), function(enemy) {
             
             enemy.setPosition((this.sys.game.config.width)+10,(this.sys.game.config.height/2));
-            enemy.setVelocity(40,0);
+            enemy.setVelocity(-40,0);
             
             i++;
            counter6++;

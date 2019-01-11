@@ -60,7 +60,7 @@ help.create = function() {
        
    });
     
-    this.tipText = this.add.text((help.sys.game.config.width/2)-12 ,(help.specEnemy.y+24),'Hints',{
+    this.tipText = this.add.text((help.sys.game.config.width/2)-24 ,(help.specEnemy.y+24),'Hints',{
        fontSize: '20px',
         fill:'#fff'
        
@@ -72,7 +72,7 @@ help.create = function() {
        
    });
     
-    this.backText = this.add.text((help.hintText.x)+72 ,(help.hintText.y+36),'Back',{
+    this.backText = this.add.text((help.sys.game.config.width/2)-24 ,(help.hintText.y+36),'Back',{
        fontSize: '24px',
         fill:'#fff'
        

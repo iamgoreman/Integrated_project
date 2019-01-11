@@ -1074,8 +1074,8 @@ gameScene.update = function(){
         gameScene.pause.setText('Unmute');
     }
     scoreText.setText('Score: '+score);
-    if(specEnemy.x<30){
-        specEnemy.destroy();
+    if(gameScene.specEnemy.x<30){
+        gameScene.specEnemy.destroy();
     }
     bg.tilePositionX+= .15;     /*increment background x position*/
     gameScene.planet.x-= .05;

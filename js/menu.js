@@ -30,7 +30,7 @@ menu.create = function() {
         fill:'#fff'});
     
     
-    this.sound = this.add.text((this.sys.game.config.width / 2)-24, (this.sys.game.config.height / 2) +36 ,'Toggle Sound: '+ menu.switch.text,{
+    this.sound = this.add.text((this.sys.game.config.width / 2)-24, (this.sys.game.config.height / 2) +40 ,'Toggle Sound: '+ menu.switch.text,{
         fontSize: '24px',
         fill:'#fff'
     });
@@ -48,7 +48,7 @@ menu.create = function() {
     },this)*/
     
     
-    this.startText = this.add.text((this.sys.game.config.width / 2)-36, (this.sys.game.config.height / 1.9) , 'START', {
+    this.startText = this.add.text((this.sys.game.config.width / 2)-36, (this.sys.game.config.height/2 ) , 'START', {
   fill: 'white',
   fontSize: 24
 })
@@ -58,7 +58,7 @@ menu.create = function() {
     this.scene.start('Game',{sound:this.fan})
 },this);
     
-    this.helpText = this.add.text((this.sys.game.config.width / 2)-32, (this.sound.y)+26 , 'Help', {
+    this.helpText = this.add.text((this.sys.game.config.width / 2)-32, (this.sound.y)+40 , 'Help', {
   fill: 'white',
   fontSize: 24
 })
